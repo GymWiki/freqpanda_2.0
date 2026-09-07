@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "freqpanda-strategy"
+name = "freqpanda"
 version = "0.1.0"
-description = "Strategy-agnostic schema + interpreter for a crypto trading bot platform (phase 1)"
+description = "Crypto trading bot platform: strategy schema/interpreter (phase 1) + data pipeline (phase 2)"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -14,6 +14,8 @@ dependencies = [
     "numpy>=1.24",
     "ta>=0.10",
     "PyYAML>=6.0",
+    "ccxt>=4.0",
+    "psycopg2-binary>=2.9",
 ]
 
 [project.optional-dependencies]
@@ -22,7 +24,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["freqpanda_strategy"]
+packages = ["freqpanda_strategy", "freqpanda_data"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

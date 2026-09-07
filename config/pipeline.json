@@ -1,0 +1,9 @@
+{
+  "exchange_id": "binance",
+  "pairs": [
+    { "symbol": "BTC/USDT", "timeframe": "1h" },
+    { "symbol": "ETH/USDT", "timeframe": "1h" },
+    { "symbol": "BTC/USDT", "timeframe": "4h" }
+  ],
+  "backfill_since": "2020-01-01T00:00:00Z"
+}

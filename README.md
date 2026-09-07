@@ -1,11 +1,17 @@
-# freqpanda-strategy
+# freqpanda
 
-Fase 1 van het eigen crypto trading bot platform: een **strategie-schema**
-(strategie-definitie als data) en een **strategie-agnostische interpreter**
-die die definitie + een OHLCV DataFrame omzet in een lijst van trades.
+Eigen crypto trading bot platform, gebouwd in fases:
 
-Los van data-fetching, backtesting-metrics, UI en live-executie — dat komt
-in latere fases, bovenop dezelfde interpreter.
+- **Fase 1 — strategie-schema + interpreter** (`freqpanda_strategy/`, hieronder):
+  strategie-definitie als data, en een strategie-agnostische interpreter die
+  die definitie + een OHLCV DataFrame omzet in een lijst van trades.
+- **Fase 2 — data-pipeline** (`freqpanda_data/`, zie
+  [freqpanda_data/README.md](freqpanda_data/README.md)): haalt OHLCV-data op
+  via CCXT, slaat het incrementeel op in Supabase/Postgres, en levert het
+  terug als DataFrame in exact het formaat dat fase 1 verwacht.
+
+Nog los van UI, backtesting-metrics en live-executie — dat komt in latere
+fases, bovenop dezelfde interpreter.
 
 ## Installeren
 
@@ -14,6 +20,8 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest
 ```
+
+## Fase 1: strategie-schema + interpreter
 
 ## Snel starten
 
