@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pandas as pd
 
 from freqpanda_api.repositories.results import (
+    _json_safe,
     get_backtest_result,
     get_optimization_result,
     list_backtest_summaries,
@@ -42,6 +43,31 @@ def _backtest_result():
         equity_curve=pd.Series([10_000.0, 11_000.0], index=pd.date_range("2024-01-01", periods=2, freq="1h")),
         costs=TradingCosts(fee_pct=0.001),
     )
+
+
+def test_json_safe_replaces_non_finite_floats_with_none():
+    assert _json_safe(float("inf")) is None
+    assert _json_safe(float("-inf")) is None
+    assert _json_safe(float("nan")) is None
+    assert _json_safe(1.5) == 1.5
+    assert _json_safe({"a": float("inf"), "b": [1.0, float("nan"), {"c": float("-inf")}]}) == {
+        "a": None,
+        "b": [1.0, None, {"c": None}],
+    }
+
+
+def test_save_backtest_result_sanitizes_infinite_profit_factor_for_jsonb():
+    # Postgres' json/jsonb columns are strict JSON and reject the
+    # "Infinity" token json.dumps emits for float('inf') -- a real bug this
+    # test pins down after it broke a live backtest with zero losing trades.
+    conn, cursor = _mock_conn_with_cursor()
+    result = _backtest_result()
+    object.__setattr__(result, "profit_factor", float("inf"))
+
+    save_backtest_result(conn, "job_1", "strat_1", result)
+
+    _, _, metrics_json, _, _ = cursor.execute.call_args[0][1]
+    assert metrics_json.adapted["profit_factor"] is None
 
 
 def test_save_backtest_result_writes_all_three_json_blobs():

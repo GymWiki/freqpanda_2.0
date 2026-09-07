@@ -118,6 +118,11 @@ def test_run_backtest_job_marks_failed_when_no_data(
     mock_mark_failed.assert_called_once()
     error_message = mock_mark_failed.call_args[0][2]
     assert "No stored OHLCV data" in error_message
+    # The connection must be rolled back before mark_failed writes to it --
+    # otherwise, if the exception path itself involved a failed statement,
+    # this UPDATE would raise InFailedSqlTransaction and the job would be
+    # left stuck on "running" forever.
+    mock_get_conn.return_value.rollback.assert_called_once()
 
 
 @patch("freqpanda_api.jobs.tasks.get_data_connection", return_value=MagicMock())

@@ -78,6 +78,10 @@ def run_backtest_job(job_id: str) -> None:
             results_repo.save_backtest_result(conn, job_id, strategy.id, result)
             jobs_repo.mark_completed(conn, job_id)
         except Exception as exc:
+            # A failed statement (e.g. a bad write) leaves the connection's
+            # transaction aborted; every further statement on it -- including
+            # this one -- would raise InFailedSqlTransaction until rolled back.
+            conn.rollback()
             jobs_repo.mark_failed(conn, job_id, str(exc))
             raise
     finally:
@@ -150,6 +154,7 @@ def run_optimization_job(job_id: str) -> None:
             )
             jobs_repo.mark_completed(conn, job_id)
         except Exception as exc:
+            conn.rollback()
             jobs_repo.mark_failed(conn, job_id, str(exc))
             raise
     finally:

@@ -9,11 +9,31 @@ about equity curves or Optuna studies.
 from __future__ import annotations
 
 import datetime as dt
+import math
 from typing import Any, Dict, List, Optional
 
 from psycopg2.extras import Json
 
 from freqpanda_backtest import BacktestResult
+
+
+def _json_safe(value: Any) -> Any:
+    """Postgres' json/jsonb types are strict RFC 8259 JSON, which has no
+    representation for Infinity/-Infinity/NaN -- but phase 3's metrics
+    legitimately produce `float('inf')` (e.g. profit_factor with zero
+    losing trades) and `float('nan')` (e.g. Sharpe with no variance).
+    Python's `json.dumps` happily emits the non-standard `Infinity`/`NaN`
+    tokens for those, which Postgres then rejects outright. Recursively
+    replace any non-finite float with `None` (SQL NULL) before it reaches
+    `Json(...)`, since that's the only value jsonb can actually store here.
+    """
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {k: _json_safe(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_json_safe(v) for v in value]
+    return value
 
 
 def save_backtest_result(conn, job_id: str, strategy_id: str, result: BacktestResult) -> None:
@@ -28,9 +48,9 @@ def save_backtest_result(conn, job_id: str, strategy_id: str, result: BacktestRe
             (
                 job_id,
                 strategy_id,
-                Json(result.metrics_dict()),
-                Json(result.trade_records()),
-                Json(result.equity_curve_records()),
+                Json(_json_safe(result.metrics_dict())),
+                Json(_json_safe(result.trade_records())),
+                Json(_json_safe(result.equity_curve_records())),
             ),
         )
     conn.commit()
@@ -108,11 +128,11 @@ def save_optimization_result(
                 job_id,
                 strategy_id,
                 metric,
-                Json(windows),
+                Json(_json_safe(windows)),
                 mean_in_sample_score,
                 mean_out_of_sample_score,
-                Json(final_params),
-                Json(final_definition),
+                Json(_json_safe(final_params)),
+                Json(_json_safe(final_definition)),
             ),
         )
     conn.commit()

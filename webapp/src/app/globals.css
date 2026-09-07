@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------
+   freqpanda design tokens -- "terminal" theme.
+   Dark-only by intent: this is a data-dense working tool used for long
+   analysis sessions, the same reasoning trading terminals have always
+   used dark screens. Amber is the brand/interactive accent (a nod to
+   phosphor CRT trading terminals); green/red are reserved strictly for
+   gain/loss semantics, never reused as decoration. The 8-slot categorical
+   set (for the multi-strategy compare chart) and the good/critical status
+   pair are the dataviz skill's validated default palette, checked with
+   scripts/validate_palette.js against this exact panel surface.
+------------------------------------------------------------------------ */
+:root {
+  --bg: #0b0e13;
+  --panel: #12161d;
+  --panel-raised: #171c24;
+  --border: #262c37;
+  --border-strong: #333b49;
+
+  --text: #e7e9ee;
+  --text-muted: #8891a0;
+  --text-faint: #5b6373;
+
+  --accent: #e7a73a;
+  --accent-strong: #f5bb5c;
+  --accent-soft: rgba(231, 167, 58, 0.14);
+
+  --good: #0ca30c;
+  --good-soft: rgba(12, 163, 12, 0.14);
+  --critical: #d03b3b;
+  --critical-soft: rgba(208, 59, 59, 0.14);
+  --warning: #fab219;
+  --warning-soft: rgba(250, 178, 25, 0.14);
+
+  /* categorical, dark, fixed order -- see freqpanda_2.0/webapp README */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+
+  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbars that fit the terminal chrome instead of the OS default */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+/* Visible keyboard focus everywhere, no exceptions */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Signature: a faint scanline texture for chart/hero panels -- the
+   phosphor-terminal reference, kept subtle enough to never compete with
+   data. */
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.015) 0px,
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.glow-amber {
+  filter: drop-shadow(0 0 6px rgba(231, 167, 58, 0.55));
+}
+.glow-good {
+  filter: drop-shadow(0 0 6px rgba(12, 163, 12, 0.5));
+}
+.glow-critical {
+  filter: drop-shadow(0 0 6px rgba(208, 59, 59, 0.5));
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}

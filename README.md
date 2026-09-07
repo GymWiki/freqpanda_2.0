@@ -24,9 +24,14 @@ Eigen crypto trading bot platform, gebouwd in fases:
   strategie-CRUD, asynchrone backtest-/optimalisatie-jobs via een
   Redis/RQ-wachtrij, resultaten in Supabase, en API-key-auth — draait via
   `docker compose up` (API + worker + Redis).
+- **Fase 6 — webapp** (`webapp/`, zie [webapp/README.md](webapp/README.md)):
+  Next.js-app tegen de echte fase-5 API — strategie-builder, backtests
+  starten met live statuspolling, een resultaten-dashboard (equity-curve,
+  metrics, trades), een vergelijkingsview, en optimalisatieresultaten
+  (in-sample vs. out-of-sample per venster). Deploybaar op Vercel.
 
-Nog los van UI en live-executie — dat komt in latere fases, bovenop
-dezelfde interpreter.
+Nog los van live-executie — dat komt in een latere fase, bovenop dezelfde
+interpreter.
 
 ## Installeren
 
