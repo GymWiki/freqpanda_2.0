@@ -1,0 +1,38 @@
+{
+  "name": "ema_crossover",
+  "description": "Long when the fast EMA crosses above the slow EMA, exit on the reverse cross or on risk limits.",
+  "timeframe": "1h",
+  "indicators": [
+    {
+      "name": "ema",
+      "alias": "ema_fast",
+      "params": {
+        "period": { "default": 12, "min": 5, "max": 20, "step": 1 }
+      }
+    },
+    {
+      "name": "ema",
+      "alias": "ema_slow",
+      "params": {
+        "period": { "default": 26, "min": 21, "max": 100, "step": 1 }
+      }
+    }
+  ],
+  "entry_conditions": {
+    "type": "comparison",
+    "left": "ema_fast",
+    "op": "crosses_above",
+    "right": "ema_slow"
+  },
+  "exit_conditions": {
+    "type": "comparison",
+    "left": "ema_fast",
+    "op": "crosses_below",
+    "right": "ema_slow"
+  },
+  "risk_management": {
+    "stop_loss_pct": 0.02,
+    "take_profit_pct": 0.06,
+    "trailing_stop_pct": 0.03
+  }
+}
