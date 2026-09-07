@@ -14,8 +14,13 @@ Eigen crypto trading bot platform, gebouwd in fases:
   trades uit fase 1 om in een equity-curve en prestatie-metrics (Sharpe,
   Sortino, drawdown, profit factor, ...), inclusief fees/slippage en
   walk-forward-validatie.
+- **Fase 4 — optimalisatie & strategie-generatie** (`freqpanda_optimize/`,
+  zie [freqpanda_optimize/README.md](freqpanda_optimize/README.md)):
+  optimaliseert indicator-parameters met Optuna (gevalideerd met
+  walk-forward, niet één train/test-split), genereert willekeurige nieuwe
+  strategie-varianten binnen opgegeven grenzen, en beoordeelt ze in batch.
 
-Nog los van optimalisatie/hyperopt, UI en live-executie — dat komt in latere
+Nog los van database-opslag, UI en live-executie — dat komt in latere
 fases, bovenop dezelfde interpreter.
 
 ## Installeren
