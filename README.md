@@ -9,8 +9,13 @@ Eigen crypto trading bot platform, gebouwd in fases:
   [freqpanda_data/README.md](freqpanda_data/README.md)): haalt OHLCV-data op
   via CCXT, slaat het incrementeel op in Supabase/Postgres, en levert het
   terug als DataFrame in exact het formaat dat fase 1 verwacht.
+- **Fase 3 — backtest-engine** (`freqpanda_backtest/`, zie
+  [freqpanda_backtest/README.md](freqpanda_backtest/README.md)): zet de
+  trades uit fase 1 om in een equity-curve en prestatie-metrics (Sharpe,
+  Sortino, drawdown, profit factor, ...), inclusief fees/slippage en
+  walk-forward-validatie.
 
-Nog los van UI, backtesting-metrics en live-executie — dat komt in latere
+Nog los van optimalisatie/hyperopt, UI en live-executie — dat komt in latere
 fases, bovenop dezelfde interpreter.
 
 ## Installeren
