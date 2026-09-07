@@ -19,9 +19,14 @@ Eigen crypto trading bot platform, gebouwd in fases:
   optimaliseert indicator-parameters met Optuna (gevalideerd met
   walk-forward, niet één train/test-split), genereert willekeurige nieuwe
   strategie-varianten binnen opgegeven grenzen, en beoordeelt ze in batch.
+- **Fase 5 — backend API & job-queue** (`freqpanda_api/`, zie
+  [freqpanda_api/README.md](freqpanda_api/README.md)): FastAPI-backend met
+  strategie-CRUD, asynchrone backtest-/optimalisatie-jobs via een
+  Redis/RQ-wachtrij, resultaten in Supabase, en API-key-auth — draait via
+  `docker compose up` (API + worker + Redis).
 
-Nog los van database-opslag, UI en live-executie — dat komt in latere
-fases, bovenop dezelfde interpreter.
+Nog los van UI en live-executie — dat komt in latere fases, bovenop
+dezelfde interpreter.
 
 ## Installeren
 

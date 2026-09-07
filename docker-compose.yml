@@ -1,0 +1,52 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    # Queue name must match JOB_QUEUE_NAME (default "freqpanda", see .env.example) --
+    # this is what a worker listens on and what the API enqueues onto.
+    command: ["rq", "worker", "--url", "redis://redis:6379/0", "${JOB_QUEUE_NAME:-freqpanda}"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    # Run more than one instance for more parallel job throughput, e.g.:
+    #   docker compose up -d --scale worker=3
+    # Each worker pulls from the same queue, so this is the whole scaling
+    # story for phase 5 -- no coordination needed between instances.
+
+volumes:
+  redis-data:

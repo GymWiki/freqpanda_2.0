@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "freqpanda"
 version = "0.1.0"
-description = "Crypto trading bot platform: strategy schema/interpreter (phase 1), data pipeline (phase 2), backtest engine (phase 3), optimization/generation (phase 4)"
+description = "Crypto trading bot platform: strategy schema/interpreter (phase 1), data pipeline (phase 2), backtest engine (phase 3), optimization/generation (phase 4), API + job queue (phase 5)"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -17,15 +17,20 @@ dependencies = [
     "ccxt>=4.0",
     "psycopg2-binary>=2.9",
     "optuna>=3.6",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "rq>=1.16",
+    "redis>=5.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
+    "httpx>=0.27",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["freqpanda_strategy", "freqpanda_data", "freqpanda_backtest", "freqpanda_optimize"]
+packages = ["freqpanda_strategy", "freqpanda_data", "freqpanda_backtest", "freqpanda_optimize", "freqpanda_api"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
