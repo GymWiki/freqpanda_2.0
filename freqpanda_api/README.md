@@ -229,17 +229,27 @@ bestaand Supabase-project.
    ```
    Genereer een sterke key met bv. `openssl rand -hex 32`.
 
+   Voor fase 7 (executie-engine) ook `EXECUTION_MASTER_KEY` invullen —
+   genereer met (in een venv met `cryptography` geïnstalleerd, of via de
+   `api`-image: `docker compose run --rm api python -c "..."`):
+   ```bash
+   python -c "from freqpanda_execution.crypto import generate_master_key; print(generate_master_key())"
+   ```
+   Zie `freqpanda_execution/README.md` voor waarom deze key nergens anders
+   dan in de omgeving mag staan, en wat verlies ervan betekent.
+
 4. **Database-migraties draaien** (eenmalig, tegen Supabase — vanaf de VPS
    of lokaal, hoeft niet vanuit een container):
    ```bash
    psql "$(grep SUPABASE_DB_URL .env | cut -d= -f2-)" -f migrations/0001_create_ohlcv_candles.sql
    psql "$(grep SUPABASE_DB_URL .env | cut -d= -f2-)" -f migrations/0002_create_api_tables.sql
+   psql "$(grep SUPABASE_DB_URL .env | cut -d= -f2-)" -f migrations/0003_create_execution_tables.sql
    ```
 
 5. **Starten**:
    ```bash
    docker compose up -d --build
-   docker compose ps        # api, worker, redis moeten alle drie "healthy"/"running" zijn
+   docker compose ps        # api, worker, execution-supervisor, redis moeten allemaal "healthy"/"running" zijn
    curl http://localhost:8000/health
    ```
 
@@ -259,16 +269,20 @@ bestaand Supabase-project.
 7. **Updates uitrollen**:
    ```bash
    git pull
-   docker compose up -d --build   # herbouwt en herstart api + worker; redis blijft draaien
+   docker compose up -d --build   # herbouwt en herstart api + worker + execution-supervisor; redis blijft draaien
    ```
 
 8. **Logs/monitoring**:
    ```bash
    docker compose logs -f api
    docker compose logs -f worker
+   docker compose logs -f execution-supervisor   # start/stop/crash-restart van elke bot
    ```
-   `restart: unless-stopped` (in `docker-compose.yml`) zorgt dat alle drie
+   `restart: unless-stopped` (in `docker-compose.yml`) zorgt dat alle vier
    de services een VPS-reboot overleven zonder verdere systemd-configuratie.
+   Een individuele bot starten/stoppen gaat niet via Docker maar via de API
+   (`POST /api/v1/bots/{id}/start|stop`, zie `freqpanda_execution/README.md`)
+   -- de supervisor pikt die statuswijziging vanzelf op.
 
 ## Tests
 

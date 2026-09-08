@@ -29,9 +29,14 @@ Eigen crypto trading bot platform, gebouwd in fases:
   starten met live statuspolling, een resultaten-dashboard (equity-curve,
   metrics, trades), een vergelijkingsview, en optimalisatieresultaten
   (in-sample vs. out-of-sample per venster). Deploybaar op Vercel.
-
-Nog los van live-executie — dat komt in een latere fase, bovenop dezelfde
-interpreter.
+- **Fase 7 — live en paper trading-executie** (`freqpanda_execution/`, zie
+  [freqpanda_execution/README.md](freqpanda_execution/README.md)): voert
+  fase 1's interpreter ongewijzigd uit tegen realtime marktdata (CCXT,
+  websocket met polling-fallback) — paper (gesimuleerde fills, virtuele
+  portfolio) of live (echte orders, versleutelde API-keys), elke bot als
+  eigen proces bewaakt door een supervisor, met risk-middleware
+  (hard stop-loss, drawdown-circuit breaker, order-sanity-checks) en
+  statusrapportage naar fase 5/6.
 
 ## Installeren
 

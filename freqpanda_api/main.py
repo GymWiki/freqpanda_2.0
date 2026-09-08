@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from freqpanda_strategy import StrategyValidationError
 
-from .routers import backtests, compare, optimizations, strategies
+from .routers import backtests, bots, compare, optimizations, strategies
 
 app = FastAPI(
     title="freqpanda API",
@@ -34,3 +34,5 @@ app.include_router(strategies.router, prefix="/api/v1")
 app.include_router(backtests.router, prefix="/api/v1")
 app.include_router(optimizations.router, prefix="/api/v1")
 app.include_router(compare.router, prefix="/api/v1")
+app.include_router(bots.router, prefix="/api/v1")
+app.include_router(bots.credentials_router, prefix="/api/v1")

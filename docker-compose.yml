@@ -48,5 +48,19 @@ services:
     # Each worker pulls from the same queue, so this is the whole scaling
     # story for phase 5 -- no coordination needed between instances.
 
+  execution-supervisor:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    # EXECUTION_MASTER_KEY must be set in .env for this service (and for
+    # `api`, which encrypts credentials on write) -- see
+    # freqpanda_execution/README.md. One supervisor process per VPS; it
+    # spawns one `python -m freqpanda_execution.runner <bot_id>` child
+    # process per running bot, so a single bot crashing never takes any
+    # other bot -- or the API -- down with it.
+    command: ["python", "-m", "freqpanda_execution.supervisor"]
+
 volumes:
   redis-data:

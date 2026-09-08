@@ -1,7 +1,7 @@
-# Single image for both the API and the worker service (docker-compose.yml
-# picks the command per service) -- same dependencies, same code, so there
-# is nothing to gain from separate images and one more thing to keep in
-# sync to lose from it.
+# Single image for the API, the RQ worker, and the phase-7 execution
+# supervisor (docker-compose.yml picks the command per service) -- same
+# dependencies, same code, so there is nothing to gain from separate images
+# and one more thing to keep in sync to lose from it.
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -19,6 +19,7 @@ COPY freqpanda_data ./freqpanda_data
 COPY freqpanda_backtest ./freqpanda_backtest
 COPY freqpanda_optimize ./freqpanda_optimize
 COPY freqpanda_api ./freqpanda_api
+COPY freqpanda_execution ./freqpanda_execution
 
 RUN pip install --no-cache-dir .
 
